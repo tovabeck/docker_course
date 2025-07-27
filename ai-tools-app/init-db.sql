@@ -1,15 +1,25 @@
-CREATE DATABASE IF NOT EXISTS ai_tools_catalog;
+-- Drop database if exists (MySQL equivalent of schema)
+DROP DATABASE IF EXISTS ai_tools_catalog;
 
+-- Create the database
+CREATE DATABASE ai_tools_catalog;
+
+-- Select the database for use
 USE ai_tools_catalog;
 
-CREATE TABLE IF NOT EXISTS ai_tools (
+-- Create the ai_tools table
+CREATE TABLE ai_tools (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    year_published INT CHECK (year_published >= 1950 AND year_published <= YEAR(CURDATE())),
-    cost_usd_per_month DECIMAL(10,2) CHECK (cost_usd_per_month >= 0),
-    average_monthly_users INT CHECK (average_monthly_users >= 0)
+    year_published INT,
+    cost_usd_per_month DECIMAL(10,2),
+    average_monthly_users INT,
+    CHECK (year_published >= 1950 AND year_published <= YEAR(CURDATE())),
+    CHECK (cost_usd_per_month >= 0),
+    CHECK (average_monthly_users >= 0)
 );
 
+-- Insert sample data into ai_tools
 INSERT INTO ai_tools (name, year_published, cost_usd_per_month, average_monthly_users)
 VALUES
     ('ChatGPT', 2022, 20.00, 100000000),
