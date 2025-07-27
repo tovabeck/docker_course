@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Tools</title>
+</head>
+<body>
+  <h1>Login</h1>
+  <form id="login-form">
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+  </form>
+
+  <h2>AI Tools</h2>
+  <table border="1" id="ai-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Year</th>
+        <th>Cost (USD)</th>
+        <th>Monthly Users</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (res.ok) {
+        const { token } = await res.json();
+        localStorage.setItem('jwt', token);
+
+        const toolsRes = await fetch('/ai-tools', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        const data = await toolsRes.json();
+        const tbody = document.querySelector('#ai-table tbody');
+        tbody.innerHTML = '';
+        data.forEach(tool => {
+          const row = `<tr>
+            <td>${tool.name}</td>
+            <td>${tool.year_published}</td>
+            <td>${tool.cost_usd_per_month}</td>
+            <td>${tool.average_monthly_users}</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+      } else {
+        alert('Login failed');
+      }
+    });
+  </script>
+</body>
+</html>
